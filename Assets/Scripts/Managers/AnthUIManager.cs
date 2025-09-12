@@ -12,7 +12,12 @@ public class AnthUIManager : MonoBehaviour
 
     private void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         auth = new FirebaseAuthService();
+    }
+    private void Start()
+    {
+        
     }
     public void OnSignUpButtonClick()
     {
@@ -22,15 +27,11 @@ public class AnthUIManager : MonoBehaviour
         }
         string email = emailTextMeshPro.text;
         string pass = passwaordTextMeshPro.text;
+        string userName = userNameTextMeshPro.text;
         if (email != "" && pass != "")
         {
            
-            //string userName = userNameTextMeshPro.text;
-            //if (userName == "")
-            //{
-            //    userName = "defualtname";
-            //}
-            auth.SignUp(email, pass, (success, message) =>
+            auth.SignUp(email, pass,userName, (success, message) =>
             {
                 Debug.Log(message);
                 if (success)
@@ -72,4 +73,5 @@ public class AnthUIManager : MonoBehaviour
         auth.SignOut() ;
         Debug.Log("SiginOut Success!");
     }
+    
 }
