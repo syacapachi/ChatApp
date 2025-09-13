@@ -12,10 +12,10 @@ using System.Collections.Generic;
 public class ChatManager : MonoBehaviour
 {
     [Header("UI References")]
-    public TMP_InputField inputField;
-    public Button sendButton;
-    public Transform content; // ScrollView ‚Ì Content
-    public GameObject messagePrefab;
+    [SerializeField] TMP_InputField inputField;
+    [SerializeField] Button sendButton;
+    [SerializeField] Transform content; // ScrollView ‚Ì Content
+    [SerializeField] GameObject messagePrefab;
 
     private FirebaseFirestore db;
     private FirebaseUser user;

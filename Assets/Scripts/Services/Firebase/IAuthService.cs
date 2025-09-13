@@ -18,14 +18,13 @@ public interface IAuthService
     void SignOut();
 }
 
-public interface SettingsService : IAuthService
+public interface ISettingsService : IAuthService
 {
     FirebaseAuth settingAuth { get; }
-    void CurrentUser();
     void DeleteUserData(System.Action<bool, string> callback);
 }
 
-public class FirebaseAuthService : IAuthService,SettingsService
+public class FirebaseAuthService : IAuthService,ISettingsService
 {
     private FirebaseAuth auth;
     private FirebaseUser currentUser = null;
@@ -99,13 +98,14 @@ public class FirebaseAuthService : IAuthService,SettingsService
         currentUser = null;
         //return Task.CompletedTask;
     }
-    public void CurrentUser()
+    private void CurrentUser()
     {
         currentUser = auth.CurrentUser;
         Debug.Log("Get CurrentUser!");
     } 
     public void DeleteUserData(System.Action<bool, string> callback)
     {
+        CurrentUser();
         currentUser.DeleteAsync().ContinueWith(task =>
         {
             if (!task.IsFaulted)
