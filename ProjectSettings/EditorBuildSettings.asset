@@ -21,7 +21,7 @@ EditorBuildSettings:
     path: Assets/Scenes/TestScene.unity
     guid: 1f36eef3c9580e24b94554f13a0b898b
   - enabled: 1
-    path: Assets/Scenes/ChatsScene.unity
+    path: Assets/Scenes/OldChatsScene.unity
     guid: 63ec17c914c9f5b40952758c2f6b35d6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
