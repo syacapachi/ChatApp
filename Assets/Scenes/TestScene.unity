@@ -288,7 +288,7 @@ GameObject:
   - component: {fileID: 258283302}
   - component: {fileID: 258283301}
   m_Layer: 5
-  m_Name: EmailText
+  m_Name: EmaliText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -857,7 +857,7 @@ GameObject:
   - component: {fileID: 680309156}
   - component: {fileID: 680309155}
   m_Layer: 5
-  m_Name: PassText
+  m_Name: PasswordText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -992,7 +992,7 @@ GameObject:
   - component: {fileID: 719610270}
   - component: {fileID: 719610271}
   m_Layer: 0
-  m_Name: LoginManagerOBj
+  m_Name: TestLoginManagerOBj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1022,7 +1022,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 719610269}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08793d5a3c9b7244f9f789213a2ed5b1, type: 3}
+  m_Script: {fileID: 11500000, guid: f989de608b3a1b34eba086dbb563ee66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   emailTextMeshPro: {fileID: 258283301}
@@ -1937,7 +1937,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 719610271}
-        m_TargetAssemblyTypeName: LoginSceneManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: TestSceneManager, Assembly-CSharp
         m_MethodName: OnSignUpButtonClick
         m_Mode: 1
         m_Arguments:
@@ -2467,7 +2467,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 719610271}
-        m_TargetAssemblyTypeName: LoginSceneManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: TestSceneManager, Assembly-CSharp
         m_MethodName: OnSignInButtonClick
         m_Mode: 1
         m_Arguments:

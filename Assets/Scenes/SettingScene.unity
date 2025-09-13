@@ -261,7 +261,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 120484298}
-  - component: {fileID: 120484297}
+  - component: {fileID: 120484299}
   m_Layer: 0
   m_Name: SettingsManagerObj
   m_TagString: Untagged
@@ -269,18 +269,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &120484297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 120484296}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca7f4551d4955f04685430c3961d7647, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &120484298
 Transform:
   m_ObjectHideFlags: 0
@@ -296,6 +284,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &120484299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120484296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd695ee67adc7e44d85276b08fa0f93b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &373960876
 GameObject:
   m_ObjectHideFlags: 0
@@ -1046,8 +1046,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 120484297}
-        m_TargetAssemblyTypeName: SettiingManager, Assembly-CSharp
+      - m_Target: {fileID: 120484299}
+        m_TargetAssemblyTypeName: SettingSceneManager, Assembly-CSharp
         m_MethodName: OnDeleteUserButton
         m_Mode: 1
         m_Arguments:
@@ -1125,7 +1125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a305a7edbd21c064e985b03590ef23ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneName: ChatScene
+  sceneName: UserHomeScene
 --- !u!4 &1912440120
 Transform:
   m_ObjectHideFlags: 0

@@ -5,16 +5,19 @@ public class UserHomeManager : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI userNameGUI;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    IAuthService auth;
     void Start()
     {
-        auth = new FirebaseAuthService();
-        userNameGUI.text = auth.UserName;  
+        userNameGUI.text = AuthManagerBase.Instance.CurrentUserName;  
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+    public void OnSignOutButtonClick()
+    {
+        AuthManagerBase.Instance.SignOut();
+        Debug.Log("SiginOut Success!");
     }
 }
