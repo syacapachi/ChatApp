@@ -9,7 +9,8 @@ using System.Collections.Generic;
 /// <summary>
 /// 
 /// </summary>
-public class ChatManager : MonoBehaviour
+/// 
+public class ChatManagerBase : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] TMP_InputField inputField;
