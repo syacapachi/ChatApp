@@ -43,9 +43,9 @@ public class AuthStateManager : MonoBehaviour
             // ユーザーがログアウトしている、またはログインしていない場合
             Debug.Log("ユーザーがログアウトしました、またはログインしていません。");
             // 例: ログイン画面を表示する、ゲームのメインメニューに戻す
-            if (SceneManager.GetActiveScene().name != "LoginScene")
+            if (SceneManager.GetActiveScene().name != "TestLoginScene")
             {
-                SceneManager.LoadScene("LoginScene");
+                SceneManager.LoadScene("TestLoginScene");
             }
             
         }
