@@ -21,8 +21,11 @@ EditorBuildSettings:
     path: Assets/Scenes/TestScene.unity
     guid: 1f36eef3c9580e24b94554f13a0b898b
   - enabled: 1
-    path: Assets/Scenes/OldChatsScene.unity
+    path: Assets/Scenes/ChatScene.unity
     guid: 63ec17c914c9f5b40952758c2f6b35d6
+  - enabled: 1
+    path: Assets/Figma/Figma/Screens/ChatScene1.unity
+    guid: bf3ee4eb73c79a24da78fe01c0a1c0b8
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
