@@ -128,7 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 162524714}
-  - component: {fileID: 162524713}
+  - component: {fileID: 162524715}
   m_Layer: 0
   m_Name: ChatManagerObj
   m_TagString: Untagged
@@ -136,23 +136,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &162524713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 162524712}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b4d597016e2d464fa28fd2e340b7c44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputField: {fileID: 466591887}
-  sendButton: {fileID: 0}
-  content: {fileID: 0}
-  messagePrefab: {fileID: 0}
-  roomId: 
 --- !u!4 &162524714
 Transform:
   m_ObjectHideFlags: 0
@@ -168,6 +151,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &162524715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162524712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e56b8252d631a484abf22c81089d1d1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messageContainer: {fileID: 2001685904}
+  myMessagePrefab: {fileID: 2623194973729859122, guid: a8e7c90fbf425f34594ff5adba3e72c3, type: 3}
+  otherMessagePrefab: {fileID: 339316724543670960, guid: 515e5684b4363a641881ddb85643f411, type: 3}
+  inputField: {fileID: 2001685902}
 --- !u!1 &466591886
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,7 +427,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 469792912}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 162524715}
+        m_TargetAssemblyTypeName: ChatSceneManager, Assembly-CSharp
+        m_MethodName: OnSendButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &469792912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1139,7 +1150,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 11.25
+  m_fontSize: 16.1
   m_fontSizeBase: 10
   m_fontWeight: 400
   m_enableAutoSizing: 1
