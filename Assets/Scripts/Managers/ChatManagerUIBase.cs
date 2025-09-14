@@ -49,7 +49,7 @@ public class ChatManagerUIBase : MonoBehaviour
         {
             { "senderId", user.UserId },
             { "message", inputField.text },
-            { "timestamp", Timestamp.GetCurrentTimestamp() }
+            { "timestamp", Timestamp.GetCurrentTimestamp().ToString() }
         };
 
         db.Collection("chatRooms").Document(roomId)

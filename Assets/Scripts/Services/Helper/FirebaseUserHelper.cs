@@ -66,7 +66,7 @@ public class FirebaseUserHelper : MonoBehaviour
         {
             { "username", user.DisplayName ?? "NoName" },
             { "email", user.Email ?? "" },
-            { "updatedAt", Timestamp.GetCurrentTimestamp() }
+            { "updatedAt", Timestamp.GetCurrentTimestamp().ToString() }
         };
 
         try
