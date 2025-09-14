@@ -39,57 +39,66 @@ public class FirebaseAuthService : IAuthService,ISettingsService
     public string UserName => Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser.DisplayName;
 
     public FirebaseAuth settingAuth => auth;
-    
 
-    public void SignUp(string email, string password,string userName, System.Action<bool, string> callback)
+
+    public async void SignUp(string email, string password, string userName, System.Action<bool, string> callback)
     {
-        auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
+        try
         {
-            if (task.IsFaulted || task.IsCanceled)
-            {
-                callback(false, task.Exception.ToString());
-                return;
-            }
-            //.Result目ソットを使うことでawaitなしで表現できる
-            currentUser = task.Result.User;
-            
-            callback(true, "サインアップ成功");
+            var result = await auth.CreateUserWithEmailAndPasswordAsync(email, password);
+            var currentUser = result.User;
 
-            //ユーザー名が空白場合のユーザIDを初期設定とする。
-            if(userName == "")
+            if (string.IsNullOrEmpty(userName))
             {
                 userName = currentUser.UserId;
             }
 
-            currentUser.UpdateUserProfileAsync(new Firebase.Auth.UserProfile { DisplayName = userName });
-            //データベースにユーザー名を登録
+            // ユーザープロフィール更新
+            await currentUser.UpdateUserProfileAsync(new Firebase.Auth.UserProfile
+            {
+                DisplayName = userName
+            });
+
+            // Firestoreに保存
             FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
             var userDoc = new Dictionary<string, object>()
             {
-                {"username",userName },
+                { "username", userName },
                 { "email", email },
-            }; 
-            //users(root) - UserId - (name,email)の構造
-            db.Collection("users").Document(CurrentUserId).SetAsync(userDoc);
+                { "iconUrl", "" },               // 後でFirebase Storageにアップロードして設定
+                { "statusMessage", "" },         // プロフィールコメント
+                { "createdAt", Timestamp.GetCurrentTimestamp().ToString() },
+                { "updatedAt", Timestamp.GetCurrentTimestamp().ToString() },
+                { "frends",new List<string>() },
+                { "chatRooms",new List<string>()}
+            };
+
+            await db.Collection("users").Document(currentUser.UserId).SetAsync(userDoc);
+
             Debug.Log("ユーザー名登録完了");
-        }); 
-        //await result.User.UpdateUserProfileAsync(new Firebase.Auth.UserProfile { DisplayName = displayName });
-        // users/{uid} ドキュメント作成もここで
+            callback(true, "サインアップ成功");
+        }
+        catch (Exception e)
+        {
+            callback(false, e.ToString());
+        }
     }
 
-    public void SignIn(string email, string password, System.Action<bool, string> callback)
+    public async void SignIn(string email, string password, System.Action<bool, string> callback)
     {
-        auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
+        try
         {
-            if (task.IsFaulted || task.IsCanceled)
-            {
-                callback(false, task.Exception.ToString());
-                return;
-            }
+            var result = await auth.SignInWithEmailAndPasswordAsync(email, password);
+            var currentUser = result.User;
 
-            currentUser = task.Result.User;
             callback(true, "ログイン成功");
-        }); 
+
+
+        }
+        catch (Exception e)
+        {
+            callback(false, e.ToString());
+        }
     }
 
     public void SignOut()
@@ -103,23 +112,19 @@ public class FirebaseAuthService : IAuthService,ISettingsService
         currentUser = auth.CurrentUser;
         Debug.Log("Get CurrentUser!");
     } 
-    public void DeleteUserData(System.Action<bool, string> callback)
+    public async void DeleteUserData(System.Action<bool, string> callback)
     {
         CurrentUser();
-        currentUser.DeleteAsync().ContinueWith(task =>
+        try
         {
-            if (!task.IsFaulted)
-            {
-                callback(false, task.Exception.ToString());
-                return;
-            }
-            if (task.IsCanceled)
-            {
-                callback(false, task.Exception.ToString());
-                return;
-            }
+            await currentUser.DeleteAsync();
             callback(true, "ユーザーデータ削除成功");
-        });
+        }
+        catch (Exception e)
+        {
+            callback(false, e.ToString());
+        }
+        
     }
 }
 

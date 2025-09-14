@@ -32,9 +32,9 @@ public class AuthStateManager : MonoBehaviour
             // ユーザーがログインしている場合
             Debug.Log($"ユーザーがログインしました: {user.DisplayName ?? "不明なユーザー名"} ({user.Email})");
             // 例: ログイン後の画面に遷移する、ログインUIを非表示にする
-            if (SceneManager.GetActiveScene().name != "UserHomeScene")
+            if (SceneManager.GetActiveScene().name != "TestUserHomeScene")
             {
-                SceneManager.LoadScene("UserHomeScene");
+                SceneManager.LoadScene("TestUserHomeScene");
             }
             
         }
