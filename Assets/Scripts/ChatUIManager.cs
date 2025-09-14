@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
-public class ChatManager : MonoBehaviour
+public class ChatUIManager : MonoBehaviour
 {
     [Header("UIéQè∆")]
     public TMP_InputField messageInputField;
