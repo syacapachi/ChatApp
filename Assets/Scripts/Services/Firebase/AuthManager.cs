@@ -10,7 +10,7 @@ public partial class AuthManager : AuthManagerBase
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
 
-    // 実体を差し込む
+    // 実体を差し込む(このコードでUnityがシーンをロードする前に呼ぶ)
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Init()
     {
