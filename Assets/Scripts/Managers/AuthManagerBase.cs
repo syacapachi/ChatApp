@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 public abstract partial class AuthManagerBase
 {
@@ -24,8 +25,12 @@ public abstract partial class AuthManagerBase
     /// <summary>
     /// UserID ランダムな文字列
     /// </summary>
+    public abstract Task OnLogin();
     public abstract string CurrentUserId { get; }
+    public abstract uint CrrentUserUintId { get; }
     public abstract string CurrentUserName { get; }
+    public abstract string UserEmail { get; }
+
 
     // ✅ 静的アクセスポイント（UIからはここを呼ぶだけ）
     public static AuthManagerBase Instance { get; protected set; }

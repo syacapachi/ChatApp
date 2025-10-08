@@ -15,5 +15,9 @@ public class SettingSceneManager : MonoBehaviour
             }
         });
     }
+    public void ChangeUserName(string userName)
+    {
+        AdministerManagerBase.Instance.UserName = userName;
+    }
 
 }

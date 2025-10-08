@@ -15,13 +15,26 @@ public partial class ChatManager : ChatManagerBase
     private FirebaseUser user;
     //繝・・繧ｿ譖ｴ譁ｰ繧定ｦ九ｋ繧・▽
     private ListenerRegistration listener;
-    private string roomId;
+    private string roomId = "";
+    private string roomName = "";
     public override event Action<string,string,string> OnMessageReceived;
+    public override string ActiveRoomName 
+    {
+        get => roomName; 
+        set 
+        {
+            //タスクを投げっぱなし、終了報告なし.
+            Task.Run(async () => await db.Collection("chatRooms").Document(roomId).UpdateAsync("roomname", value));
+            Debug.Log("Firestore の  roomname を更新しました");
+        }
+
+    }
+    public override string ActiveRoomID => roomId;
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Init()
     {
         Instance = new ChatManager();
-        Debug.Log("ChatManager(Firebase) 蛻晄悄蛹門ｮ御ｺ・");
+        Debug.Log("ChatManager(Firebase)初期化完了");
     }
     private ChatManager()
     {
@@ -50,11 +63,50 @@ public partial class ChatManager : ChatManagerBase
             Debug.LogException(e);
         }
         
+    }
+    public async override void AnonymusSendMessage(string message)
+    {
+        if (string.IsNullOrEmpty(message)) return;
+        try
+        {
+            var msg = new Dictionary<string, object>
+            {
+                { "senderId", "null" },
+                { "senderName","anonymus"},
+                { "message", message },
+                { "timestamp", Timestamp.GetCurrentTimestamp().ToString() }
+            };
+
+            await db.Collection("chatRooms").Document(roomId)
+              .Collection("messages").AddAsync(msg);
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+        }
+
 
     }
-    public override void StartListenMessages(string _roomId)
+    public override void SendPicture(string pictureURL)
+    {
+        throw new NotImplementedException();
+    }
+    private async Task RoomNameUpdate()
+    {
+        DocumentSnapshot roomdoc = await db.Collection("chatRoooms").Document(roomId).GetSnapshotAsync();
+        if (roomdoc.Exists)
+        {
+            roomName = roomdoc.GetValue<string>("roomname");
+        }
+        else
+        {
+            Debug.Log("Room name is not Exist");
+        }
+    }
+    public async override void StartListenMessages(string _roomId)
     {
         roomId = _roomId;
+        await RoomNameUpdate();
         listener = db.Collection("chatRooms").Document(roomId)
             .Collection("messages")
             .OrderBy("timestamp")
@@ -68,8 +120,8 @@ public partial class ChatManager : ChatManagerBase
                         string username = await GetUserName(userID);
                         string msg = docChange.Document.GetValue<string>("message");
                         string timestamp = docChange.Document.GetValue<string>("timestamp");
-                        Debug.Log($"[Firestore] 蜿嶺ｿ｡: {msg}");
-                        OnMessageReceived?.Invoke(msg,username,timestamp); // UI蛛ｴ縺ｸ騾夂衍
+                        Debug.Log($"[Firestore] messageGet｡: {msg}");
+                        OnMessageReceived?.Invoke(msg,username,timestamp); // UIに随時通知を飛ばす.
                     }
                 }
             });
@@ -78,6 +130,8 @@ public partial class ChatManager : ChatManagerBase
     public override void StopLister()
     {
         listener?.Dispose();
+        roomId = "";
+        roomName = "";
     }
     private async Task<string> GetUserName(string userId)
     {

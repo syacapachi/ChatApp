@@ -105,8 +105,6 @@ InitTestScene*.unity*
 /[Aa]ssets/ExternalDependencyManager/
 /[Aa]ssets/Plugins/
 
-# FirebaseScript
-# /[Aa]ssets/Scripts/Services/
 
 # Node.js dependencies
 node_modules/

@@ -1,3 +1,6 @@
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,13 +8,21 @@ using UnityEngine.UI;
 public class UserHomeManager : MonoBehaviour
 {
     [SerializeField] private Transform roomListParent;   // GridLayoutGroupやVerticalLayoutGroupをアタッチした親
-    [SerializeField] private GameObject roomButtonPrefab;
+    [SerializeField] private Transform searchListParent;
+    [SerializeField] private GameObject goToRoomButtonPrefab;
+    [SerializeField] private GameObject goToAndJoinRoomButtonPrefab;
     [SerializeField] TextMeshProUGUI userNameGUI;
+    [SerializeField] TextMeshProUGUI searchFiled;
+    [SerializeField] GameObject searchResultViewCanvas;
+    public Dictionary<string, string> usersRooms ;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        userNameGUI.text = AuthManagerBase.Instance.CurrentUserName;
+        searchResultViewCanvas.SetActive(false);
+        userNameGUI.text = AuthManagerBase.Instance.CurrentUserName + AuthManagerBase.Instance.CrrentUserUintId.ToString();
+        usersRooms = new Dictionary<string, string>();
         ChatRoomsManagerBase.Instance.OnChatRoomsReceived += OnRoomLoad;
+        ChatRoomsManagerBase.Instance.OnFoundRoomsReceived += OnSeachRooms;
         ChatRoomsManagerBase.Instance.LoadRoomsAsync();
     }
 
@@ -19,10 +30,23 @@ public class UserHomeManager : MonoBehaviour
     void OnDestroy()
     {
         ChatRoomsManagerBase.Instance.OnChatRoomsReceived -= OnRoomLoad;
+        ChatRoomsManagerBase.Instance.OnFoundRoomsReceived -= OnSeachRooms;
+    }
+    private void OnSeachRooms(string roomId, string roomName)
+    {
+        if (!usersRooms.ContainsKey(roomId))
+        {
+            GameObject buttonobj = Instantiate(goToAndJoinRoomButtonPrefab, searchListParent);
+            RoomJoinButton button = buttonobj.GetComponent<RoomJoinButton>();
+            button.Setup(roomId, roomName);
+        }
+            
+        
     }
     public void OnRoomLoad(string roomName, string roomId)
     {
-        GameObject buttonObj = Instantiate(roomButtonPrefab, roomListParent);
+        usersRooms.Add(roomId, roomName);
+        GameObject buttonObj = Instantiate(goToRoomButtonPrefab, roomListParent);
         RoomButton button = buttonObj.GetComponent<RoomButton>();
         button.Setup(roomId, roomName);
     }
@@ -37,5 +61,10 @@ public class UserHomeManager : MonoBehaviour
         Debug.Log($"CreateButton OnClick User:{userid}");
         ChatRoomsManagerBase.Instance.MakeRoomAsync(userid);
         ChatRoomsManagerBase.Instance.LoadRoomsAsync();
+    }
+    public void OnSearchButtonClick()
+    {
+        searchResultViewCanvas.SetActive(true);
+        ChatRoomsManagerBase.Instance.SearchGroupsByNamePrefix(searchFiled.text);
     }
 }

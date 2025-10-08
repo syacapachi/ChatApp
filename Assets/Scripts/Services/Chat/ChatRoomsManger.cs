@@ -1,16 +1,18 @@
 using Firebase.Firestore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 public partial class ChatRoomsManger : ChatRoomsManagerBase
 {
     FirebaseFirestore db;
     public override event Action<string,string> OnChatRoomsReceived;
-    public override event Action<List<(string groupId, string groupName)>> OnFoundRoomsReceived;
+    public override event Action<string, string> OnFoundRoomsReceived;
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    public static void Init()
+    private static void Init()
     {
         Instance = new ChatRoomsManger();
         Debug.Log("ChatRoomsManager(Firebase) 初期化完了");
@@ -123,6 +125,25 @@ public partial class ChatRoomsManger : ChatRoomsManagerBase
         }
         
     }
+    public override async void AddUserToRoom(string userId,string roomId)
+    {
+        try
+        {
+            // グループにユーザーを追加
+            await db.Collection("chatRooms").Document(roomId)
+                .UpdateAsync("members", FieldValue.ArrayUnion(userId));
+
+            // ユーザーにグループを追加
+            await db.Collection("users").Document(userId)
+                .UpdateAsync("chatRooms", FieldValue.ArrayUnion(roomId));
+
+            Debug.Log($"ユーザー {userId} がグループ {roomId} に招待されました。");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
+    }
     public override async void LoadRoomsAsync()
     {
         try { 
@@ -163,6 +184,10 @@ public partial class ChatRoomsManger : ChatRoomsManagerBase
                     }
                 }
             }
+            else
+            {
+                Debug.Log("Room is not Exist");
+            }
             
         }
         catch (Exception e)
@@ -170,35 +195,58 @@ public partial class ChatRoomsManger : ChatRoomsManagerBase
             UnityEngine.Debug.Log($"LoadRoomsAsync でエラー: {e}");
         }
     }
-    public override void SearchGroupsByNamePrefix(string keyword)
+    public async override void SearchGroupsByNamePrefix(string keyword)
     {
-        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-
+        string start = keyword;
+        string end = keyword + "\uf8ff";
+        Debug.Log($"Searching...{keyword}");
         // 文字列の前方一致検索 (例: "Uni" -> "Unity Lovers")
-        db.Collection("groups")
-          .OrderBy("name")
-          .StartAt(keyword)
-          .EndAt(keyword + "\uf8ff")   // Unicode 最大値で範囲指定
-          .GetSnapshotAsync()
-          .ContinueWith(task =>
-          {
-              if (task.IsFaulted || task.IsCanceled)
-              {
-                  Debug.LogError("グループ検索失敗: " + task.Exception);
-                  return;
-              }
+        Query query = db.Collection("chatRooms")
+        .WhereGreaterThanOrEqualTo("roomname", start);
+        //.WhereLessThanOrEqualTo("roomname", end)
+        Debug.Log($"getquery:{query.ToString()}");
+        QuerySnapshot snapshot = await query.GetSnapshotAsync();
+        //.OrderBy("roomname")
+        //.StartAt(keyword)
+        //.EndAt(keyword + "\uf8ff")   // Unicode 最大値で範囲指定
+        //.GetSnapshotAsync();
+        if (snapshot != null)
+        {
+            Debug.Log("GetSnapShot");
+            foreach (DocumentSnapshot doc in snapshot.Documents)
+            {
+                //var dictonary = doc.ToDictionary();
+                //foreach (string key in dictonary.Keys)
+                //{
+                //    Debug.Log($"Keys:{key}");
+                //}
+                string groupId = doc.Id;
+                Debug.Log($"{groupId}");
+                string groupName = doc.ContainsField("roomname") ? doc.GetValue<string>("roomname") : "(No Name)";
+                //results.Add((groupId, groupName));
+                Debug.Log($"SearchHit! {groupId}:{groupName}");
+                OnFoundRoomsReceived?.Invoke(groupId, groupName);
+            }
+            Debug.Log("EndSnapShot");
+        }
+        else
+        {
+            Debug.Log("Seaech is not Success");
+        }
+          //.ContinueWith(task =>
+          //{
+          //    if (task.IsFaulted || task.IsCanceled)
+          //    {
+          //        Debug.LogError("グループ検索失敗: " + task.Exception);
+          //        return;
+          //    }
 
-              List<(string, string)> results = new List<(string, string)>();
+          //    //List<(string, string)> results = new List<(string, string)>();
 
-              foreach (var doc in task.Result.Documents)
-              {
-                  string groupId = doc.Id;
-                  string groupName = doc.ContainsField("name") ? doc.GetValue<string>("name") : "(No Name)";
-                  results.Add((groupId, groupName));
-              }
+              
 
-              OnFoundRoomsReceived?.Invoke(results);
-          });
+          //    //OnFoundRoomsReceived?.Invoke(results);
+          //});
     }
 
 }

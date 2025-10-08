@@ -1,69 +1,70 @@
+using Firebase.Auth;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using Firebase.Auth; // Firebase Authenticationのインポート
-using System; // EventHandlerのために必要
+using UnityEngine.EventSystems;
+using System;
+using static UnityEngine.CullingGroup;
 
-public class AuthStateManager : MonoBehaviour
+public partial class AuthStateManager : AuthStateMangerBase
 {
-    // FirebaseAuthのインスタンスを保持する変数
     private FirebaseAuth auth;
-
-    void Awake()
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Init()
     {
-        //破棄されないようにする
-        DontDestroyOnLoad(gameObject);
-        // FirebaseAuthのデフォルトインスタンスを取得
+        Instance = new AuthStateManager();
+    }
+    private AuthStateManager()
+    {
         auth = FirebaseAuth.DefaultInstance;
+        
+    }
+    public override event Action<string> OnUserStateChanged;
+    public override event Action<string> OnIdChanged;
 
-        // StateChangedイベントにリスナーを登録
-        // このリスナーは、認証状態が変わるたびにOnAuthStateChangedメソッドを呼び出す
-        auth.StateChanged += OnAuthStateChanged;
-        Debug.Log("FirebaseAuth.StateChanged リスナーを登録しました。");
+    public override void StartListenState()
+    {
+        auth.StateChanged += OnStateChange;
+    }
+    public override void StopListenState()
+    {
+        auth.StateChanged -= OnStateChange;
     }
 
-    // 認証状態が変更されたときに呼び出されるメソッド
-    void OnAuthStateChanged(object sender, EventArgs eventArgs)
+    private void OnStateChange(object sender,EventArgs eventArgs)
     {
-        // 現在のユーザー情報を取得
-        FirebaseUser user = auth.CurrentUser;
-
-        if (user != null)
+        if (auth.CurrentUser != null)
         {
-            // ユーザーがログインしている場合
-            Debug.Log($"ユーザーがログインしました: {user.DisplayName ?? "不明なユーザー名"} ({user.Email})");
-            // 例: ログイン後の画面に遷移する、ログインUIを非表示にする
-            if (SceneManager.GetActiveScene().name != "TestUserHomeScene")
-            {
-                SceneManager.LoadScene("TestUserHomeScene");
-            }
-            
+            OnUserStateChanged?.Invoke("Login");
         }
         else
         {
-            // ユーザーがログアウトしている、またはログインしていない場合
-            Debug.Log("ユーザーがログアウトしました、またはログインしていません。");
-            // 例: ログイン画面を表示する、ゲームのメインメニューに戻す
-            if (SceneManager.GetActiveScene().name != "TestLoginScene")
-            {
-                SceneManager.LoadScene("TestLoginScene");
-            }
-            
+            OnUserStateChanged?.Invoke("LogOut");
         }
+        
     }
-
-    void OnDestroy()
+    public override void StartLintenId()
     {
-        // オブジェクトが破棄される際に、メモリリークを防ぐためリスナーの登録を解除する
-        if (auth != null)
+        auth.IdTokenChanged += OnIdChange;
+    }
+    public override void StopLintenId()
+    {
+        auth.IdTokenChanged -= OnIdChange;
+    }
+    private void OnIdChange(object sender,EventArgs eventArgs)
+    {
+        if(auth.CurrentUser != null)
         {
-            auth.StateChanged -= OnAuthStateChanged;
-            Debug.Log("FirebaseAuth.StateChanged リスナーを解除しました。");
+            OnIdChanged?.Invoke("SessionRunning");
         }
+        else
+        {
+            OnIdChanged?.Invoke("SessionTimeOut");
+        }
+        
     }
 
     // 例として、ログインとログアウトのダミーメソッド
     // これらは本来、ログインボタンやログアウトボタンのクリックイベントなどで呼び出されます
-    public void SignInAnonymously()
+    public override void SignInAnonymously()
     {
         auth.SignInAnonymouslyAsync().ContinueWith(task => {
             if (task.IsCanceled)
@@ -81,9 +82,10 @@ public class AuthStateManager : MonoBehaviour
         });
     }
 
-    public void SignOut()
+    public override void SignOutAnonymously()
     {
         auth.SignOut();
         Debug.Log("ユーザーがログアウトしました。");
     }
 }
+

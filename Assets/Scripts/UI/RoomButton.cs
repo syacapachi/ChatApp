@@ -1,4 +1,3 @@
-// RoomButton.cs
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -19,8 +18,9 @@ public class RoomButton : MonoBehaviour
     public void OnClick()
     {
         // ルームIDを保存してシーン遷移
-        //Listenlerを起動
-        SceneManager.LoadScene("TestChatScene");
+        //Listenerを起動
         ChatManagerBase.Instance.StartListenMessages(roomId);
+        SceneManager.LoadScene("TestChat2Scene");
+       
     }
 }

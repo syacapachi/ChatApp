@@ -11,7 +11,7 @@ public abstract class ChatRoomsManagerBase
     /// <summary>
     /// List<Tuple<(string roomId,string roomname)>>
     /// </summary>
-    public abstract event Action<List<(string groupId, string groupName)>> OnFoundRoomsReceived;
+    public abstract event Action<string, string > OnFoundRoomsReceived;
     /// <summary>
     /// チャットルームの作成
     /// </summary>
@@ -33,6 +33,7 @@ public abstract class ChatRoomsManagerBase
     /// <summary>
     /// User/{UserId}/{"chatRooms"}上に存在する全てのルームデータを取得。
     /// </summary>
+    public abstract void AddUserToRoom(string userId, string roomId);
     public abstract void LoadRoomsAsync();
     public abstract void SearchGroupsByNamePrefix(string keyword );
     public static ChatRoomsManagerBase Instance { get; protected set; }
